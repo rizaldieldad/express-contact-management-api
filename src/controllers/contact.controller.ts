@@ -1,4 +1,4 @@
-import { fetchContacts, findContactById, storeNewContact } from "../services/contact.service"
+import { fetchContacts, findContactById, storeNewContact, deleteContact } from "../services/contact.service"
 import Contact,  { IContact } from "../models/Contact"
 import { Request, Response } from "express";
 
@@ -69,6 +69,29 @@ export const createContact = async (req: Request, res: Response) => {
     return res.status(500).json({
       success: false,
       message: "Server error", error
+    })
+  }
+}
+
+export const deleteContactById = async (req: Request, res: Response) => {
+  const { id } = req.params
+  try {
+    const deletedContact: IContact | null = await deleteContact(id);
+    if (!deletedContact) {
+      return res.status(404).json({
+        success: false,
+        message: `Contact not found by Id: ${id}`
+      })
+    }
+    
+    return res.status(200).json({
+      success: true,
+      message: "Contact deleted successfully"
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error"
     })
   }
 }
