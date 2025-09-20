@@ -1,9 +1,10 @@
-import Contact, { IContact } from "../models/Contact";
+import { fetchContacts, storeNewContact } from "../services/contact.service"
+import Contact,  { IContact } from "../models/Contact"
 import { Request, Response } from "express";
 
 export const getContacts = async (req: Request, res: Response) => {
   try {
-    const contacts: IContact[] = await Contact.find();
+    const contacts: IContact[] = await fetchContacts();
     res.status(200).json({
       success: true,
       message: "Contacts fetched successfully",
@@ -26,14 +27,14 @@ export const createContact = async (req: Request, res: Response) => {
     })
   }
 
-  const contactData: IContact = new Contact({
+  const contactData: IContact = new Contact ({
     name,
     email,
     phone
   })
 
   try {
-    const newContact = await contactData.save();
+    const newContact = await storeNewContact(contactData);
     return res.status(201).json({
       success: true,
       message: "Contact created successfully",
